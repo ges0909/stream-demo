@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'idea'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.+'
+    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.12.2'
+    testCompile group: 'org.openjdk.jmh', name: 'jmh-core', version: '1.21'
+    testCompile group: 'org.openjdk.jmh', name: 'jmh-generator-annprocess', version: '1.21'
+}
