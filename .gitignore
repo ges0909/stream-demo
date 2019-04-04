@@ -9,3 +9,5 @@ out
 .classpath
 .project
 bin
+
+.vscode
