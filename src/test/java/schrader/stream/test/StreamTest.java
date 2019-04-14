@@ -2,14 +2,123 @@ package schrader.stream.test;
 
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
+import java.util.stream.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StreamTest {
+
+    /**
+     * Stream creation
+     */
+
+    @Test
+    public void emptyStream() {
+        Stream s = Stream.of(); // Stream<T> not required because of Java 10 local variable type inference
+        Stream s2 = Stream.empty();
+        assertThat(s.count()).isEqualTo(0);
+        assertThat(s2.count()).isEqualTo(0);
+    }
+
+    @Test
+    public void streamFromIntegers() {
+        Stream<Integer> s = Stream.of(1, 2, 3);
+        assertThat(s.toArray(Integer[]::new)).isEqualTo(new Integer[]{1, 2, 3});
+    }
+
+    @Test
+    public void streamFromCharacters() {
+        Stream<Character> s = Stream.of('a', 'b', 'c');
+        assertThat(s.toArray(Character[]::new)).isEqualTo(new Character[]{'a', 'b', 'c'});
+    }
+
+    @Test
+    public void streamFromStrings() {
+        Stream<String> s = Stream.of("a", "b", "c");
+        assertThat(s.toArray(String[]::new)).isEqualTo(new String[]{"a", "b", "c"});
+    }
+
+    @Test
+    public void streamFromIntPrimitives() {
+        IntStream s = "test".chars();
+        IntStream s2 = "test".codePoints();
+        assertThat(s.toArray()).isEqualTo(new int[]{116, 101, 115, 116});
+        assertThat(s2.toArray()).isEqualTo(new int[]{116, 101, 115, 116});
+    }
+
+    @Test
+    public void streamFromPattern() {
+        Pattern p = Pattern.compile(",");
+        Stream<String> s = p.splitAsStream("a,b,c");
+        assertThat(s.toArray(String[]::new)).isEqualTo(new String[]{"a", "b", "c"});
+    }
+
+    @Test
+    public void streamFromArray() {
+        Stream<Integer> s = Stream.of(1, 2, 3);
+        assertThat(s.toArray(Integer[]::new)).isEqualTo(new Integer[]{1, 2, 3});
+    }
+
+    @Test
+    public void streamFromArrayOfIntPrimitives() {
+        IntStream s = Arrays.stream(new int[]{1, 2, 3});
+        assertThat(s.toArray()).isEqualTo(new Integer[]{1, 2, 3});
+    }
+
+    @Test
+    public void streamFromArrayOfLongPrimitives() {
+        LongStream s = Arrays.stream(new long[]{1, 2, 3});
+        assertThat(s.toArray()).isEqualTo(new Long[]{1L, 2L, 3L});
+    }
+
+    @Test
+    public void streamFromArrayOfDoublePrimitives() {
+        DoubleStream s = Arrays.stream(new double[]{1, 2, 3});
+        assertThat(s.toArray()).isEqualTo(new Double[]{1.0, 2.0, 3.0});
+    }
+
+    @Test
+    public void streamFromCollections() {
+        List<Integer> l = Arrays.asList(1, 2, 3);
+        Stream<Integer> s = l.stream(); // any type of collection possible
+        assertThat(s.toArray()).isEqualTo(new Integer[]{1, 2, 3});
+    }
+
+    @Test
+    public void parallelStreamFromCollections() {
+        Set<Integer> s = new HashSet<>(Arrays.asList(1, 2, 3));
+        Stream<Integer> ps = s.parallelStream(); // any type of collection possible
+        assertThat(ps.toArray()).isEqualTo(new Integer[]{1, 2, 3});
+    }
+
+    @Test
+    public void streamFromGenerate() {
+        var s = Stream.generate(new Random()::nextInt).limit(6); // generates an infinite unordered stream
+        s.forEach(System.out::println);
+    }
+
+    @Test
+    public void streamFromIterate() {
+        var s = Stream.iterate(3, n -> n + 1).limit(6); // generates an infinite ordered stream
+        assertThat(s.toArray()).isEqualTo(new int[]{3, 4, 5, 6, 7, 8});
+    }
+
+    @Test
+    public void streamFromFile() throws IOException {
+        Stream<String> s = Files.lines(Paths.get("C:\\sample.txt"));
+        s.forEach(System.out::println);
+    }
+
+    /**
+     * Stream conversion
+     */
 
     @Test
     public void listToString() {
@@ -27,7 +136,6 @@ public class StreamTest {
         // variant 2
         int[] result2 = list.stream().mapToInt(l -> l).toArray();
         assertThat(result2).isEqualTo(new Integer[]{1, 2, 3, 5, 8, 13, 21});
-
     }
 
     @Test
