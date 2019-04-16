@@ -3,6 +3,7 @@ package schrader.stream.test;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.*;
@@ -111,9 +112,9 @@ public class StreamTest {
     }
 
     @Test
-    public void streamFromFile() throws IOException {
-        try (Stream<String> s = Files.lines(Paths.get("C:\\sample.txt"))) {
-            s.forEach(System.out::println);
+    public void streamFromFile() throws IOException, URISyntaxException {
+        try (Stream<String> s = Files.lines(Paths.get(getClass().getClassLoader().getResource("samples.txt").toURI()))) {
+            assertThat(s.toArray()).isEqualTo(new String[]{"eins", "zwei", "drei"});
         }
     }
 

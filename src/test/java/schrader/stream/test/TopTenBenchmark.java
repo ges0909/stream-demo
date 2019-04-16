@@ -21,8 +21,8 @@ public class TopTenBenchmark {
         }
     }
 
-    @BenchmarkMode(Mode.SampleTime)
     @Benchmark
+    @BenchmarkMode(Mode.SampleTime)
     public void topten(Blackhole blackhole) {
         Arrays.stream(new String[]{"large.txt"})
                 .flatMap(this::fileLines)
