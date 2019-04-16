@@ -205,9 +205,16 @@ public class StreamTest {
 
     @Test
     public void sorted() {
-        final List<Integer> l = Arrays.asList(2, 3, 1);
-        final List<Integer> ls = l.stream().sorted(Comparator.comparing(Integer::intValue)).collect(Collectors.toList());
-        assertThat(ls).isEqualTo(Arrays.asList(1, 2, 3));
+        final List<Integer> list = Arrays.asList(2, 3, 1);
+        final List<Integer> sortedList = list.stream().sorted().collect(Collectors.toList());
+        assertThat(sortedList).isEqualTo(Arrays.asList(1, 2, 3));
+    }
+
+    @Test
+    public void sortedWithComparator() {
+        final List<Integer> list = Arrays.asList(2, 3, 1);
+        final List<Integer> sortedList = list.stream().sorted(Comparator.comparing(Integer::intValue)).collect(Collectors.toList());
+        assertThat(sortedList).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
     public void forEach() {
