@@ -22,7 +22,7 @@ public class StreamTest {
     @Test
     public void emptyStream() {
         Stream<String> s = Stream.of(); // Stream<T> not required because of Java 10 local variable type inference
-        Stream s2 = Stream.empty();
+        Stream<String> s2 = Stream.empty();
         assertThat(s.count()).isEqualTo(0);
         assertThat(s2.count()).isEqualTo(0);
     }
@@ -112,8 +112,9 @@ public class StreamTest {
 
     @Test
     public void streamFromFile() throws IOException {
-        Stream<String> s = Files.lines(Paths.get("C:\\sample.txt"));
-        s.forEach(System.out::println);
+        try (Stream<String> s = Files.lines(Paths.get("C:\\sample.txt")))  {
+            s.forEach(System.out::println);
+        }
     }
 
     /**
