@@ -22,52 +22,52 @@ public class StreamTest {
 
     @Test
     public void emptyStreamWithOf() {
-        Stream<String> s = Stream.of();
+        final Stream<String> s = Stream.of();
         assertThat(s.count()).isEqualTo(0);
     }
 
     @Test
     public void emptyStream() {
-        Stream<String> s = Stream.empty();
+        final Stream<String> s = Stream.empty();
         assertThat(s.count()).isEqualTo(0);
     }
 
     @Test
     public void streamFromIntegers() {
-        Stream<Integer> s = Stream.of(1, 2, 3);
+        final Stream<Integer> s = Stream.of(1, 2, 3);
         assertThat(s.toArray(Integer[]::new)).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
     public void streamFromCharacters() {
-        Stream<Character> s = Stream.of('a', 'b', 'c');
+        final Stream<Character> s = Stream.of('a', 'b', 'c');
         assertThat(s.toArray(Character[]::new)).isEqualTo(new Character[]{'a', 'b', 'c'});
     }
 
     @Test
     public void streamFromStrings() {
-        Stream<String> s = Stream.of("a", "b", "c");
+        final Stream<String> s = Stream.of("a", "b", "c");
         assertThat(s.toArray(String[]::new)).isEqualTo(new String[]{"a", "b", "c"});
     }
 
     @Test
     public void streamFromIntPrimitives() {
-        IntStream s = "test".chars();
-        IntStream s2 = "test".codePoints();
+        final IntStream s = "test".chars();
+        final IntStream s2 = "test".codePoints();
         assertThat(s.toArray()).isEqualTo(new int[]{116, 101, 115, 116});
         assertThat(s2.toArray()).isEqualTo(new int[]{116, 101, 115, 116});
     }
 
     @Test
     public void streamFromPattern() {
-        Pattern p = Pattern.compile(",");
-        Stream<String> s = p.splitAsStream("a,b,c");
+        final Pattern p = Pattern.compile(",");
+        final Stream<String> s = p.splitAsStream("a,b,c");
         assertThat(s.toArray(String[]::new)).isEqualTo(new String[]{"a", "b", "c"});
     }
 
     @Test
     public void streamFromArray() {
-        Stream<Integer> s = Stream.of(1, 2, 3);
+        final Stream<Integer> s = Stream.of(1, 2, 3);
         assertThat(s.toArray(Integer[]::new)).isEqualTo(new Integer[]{1, 2, 3});
     }
 
@@ -79,27 +79,27 @@ public class StreamTest {
 
     @Test
     public void streamFromArrayOfLongPrimitives() {
-        LongStream s = Arrays.stream(new long[]{1, 2, 3});
+        final LongStream s = Arrays.stream(new long[]{1, 2, 3});
         assertThat(s.toArray()).isEqualTo(new Long[]{1L, 2L, 3L});
     }
 
     @Test
     public void streamFromArrayOfDoublePrimitives() {
-        DoubleStream s = Arrays.stream(new double[]{1, 2, 3});
+        final DoubleStream s = Arrays.stream(new double[]{1, 2, 3});
         assertThat(s.toArray()).isEqualTo(new Double[]{1.0, 2.0, 3.0});
     }
 
     @Test
     public void streamFromCollections() {
-        List<Integer> l = Arrays.asList(1, 2, 3);
-        Stream<Integer> s = l.stream(); // any type of collection possible
+        final List<Integer> l = Arrays.asList(1, 2, 3);
+        final Stream<Integer> s = l.stream(); // any type of collection possible
         assertThat(s.toArray()).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
     public void parallelStreamFromCollections() {
-        Set<Integer> s = new HashSet<>(Arrays.asList(1, 2, 3));
-        Stream<Integer> ps = s.parallelStream(); // any type of collection possible
+        final Set<Integer> s = new HashSet<>(Arrays.asList(1, 2, 3));
+        final Stream<Integer> ps = s.parallelStream(); // any type of collection possible
         assertThat(ps.toArray()).isEqualTo(new Integer[]{1, 2, 3});
     }
 
@@ -117,7 +117,7 @@ public class StreamTest {
 
     @Test
     public void streamFromFile() throws IOException, URISyntaxException {
-        try (Stream<String> s = Files.lines(Paths.get(getClass().getClassLoader().getResource("samples.txt").toURI()))) {
+        try (final Stream<String> s = Files.lines(Paths.get(getClass().getClassLoader().getResource("samples.txt").toURI()))) {
             assertThat(s.toArray()).isEqualTo(new String[]{"eins", "zwei", "drei"});
         }
     }
@@ -128,30 +128,30 @@ public class StreamTest {
 
     @Test
     public void streamToList() {
-        Stream<Integer> s = Stream.of(1, 2, 3);
-        List<Integer> list = s.collect(Collectors.toList());
+        final Stream<Integer> s = Stream.of(1, 2, 3);
+        final List<Integer> list = s.collect(Collectors.toList());
         assertThat(list).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
     @Test
     public void streamToCollection() {
-        Stream<Integer> s = Stream.of(1, 2, 3);
-        Collection<Integer> coll = s.collect(Collectors.toCollection(ArrayList::new));
+        final Stream<Integer> s = Stream.of(1, 2, 3);
+        final Collection<Integer> coll = s.collect(Collectors.toCollection(ArrayList::new));
         assertThat(coll).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
     @Test
     public void streamToListWithForEach() {
-        Stream<Integer> s = Stream.of(1, 2, 3);
-        List<Integer> list = new ArrayList<>();
+        final Stream<Integer> s = Stream.of(1, 2, 3);
+        final List<Integer> list = new ArrayList<>();
         s.forEach(list::add);
         assertThat(list).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
     @Test
     public void streamToMap() {
-        Stream<String[]> s = Stream.of(new String[][]{{"1", "one"}, {"2", "two"}});
-        Map<String, String> map = s.collect(Collectors.toMap(e -> e[0], e -> e[1]));
+        final Stream<String[]> s = Stream.of(new String[][]{{"1", "one"}, {"2", "two"}});
+        final Map<String, String> map = s.collect(Collectors.toMap(e -> e[0], e -> e[1]));
         assertThat(map).isEqualTo(new HashMap<>() {{
             put("1", "one");
             put("2", "two");
@@ -167,29 +167,29 @@ public class StreamTest {
 
     @Test
     public void streamToArrayOfIntPrimitives() {
-        Stream<Integer> s = Stream.of(1, 2, 3);
-        int[] array = s.mapToInt(i -> i).toArray();
+        final Stream<Integer> s = Stream.of(1, 2, 3);
+        final int[] array = s.mapToInt(i -> i).toArray();
         assertThat(array).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
     public void reduceListOfElementsToString() {
-        List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
-        String s = l.stream().map(String::valueOf).reduce((a, b) -> a + ", " + b).orElseGet(String::new);
+        final List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
+        final String s = l.stream().map(String::valueOf).reduce((a, b) -> a + ", " + b).orElseGet(String::new);
         assertThat(s).isEqualTo("1, 2, 3, 5, 8, 13, 21");
     }
 
     @Test
     public void convertListToArray() {
-        List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
-        Integer[] a = l.stream().toArray(Integer[]::new);
+        final List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
+        final Integer[] a = l.stream().toArray(Integer[]::new);
         assertThat(a).isEqualTo(new Integer[]{1, 2, 3, 5, 8, 13, 21});
     }
 
     @Test
     public void convertListToIntArray() {
-        List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
-        int[] a = l.stream().mapToInt(i -> i).toArray();
+        final List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
+        final int[] a = l.stream().mapToInt(i -> i).toArray();
         assertThat(a).isEqualTo(new Integer[]{1, 2, 3, 5, 8, 13, 21});
     }
 
@@ -197,6 +197,33 @@ public class StreamTest {
      * Stream operation
      */
 
+    public void filter() {
+    }
+
+    public void map() {
+    }
+
+    @Test
+    public void sorted() {
+        final List<Integer> l = Arrays.asList(2, 3, 1);
+        final List<Integer> ls = l.stream().sorted(Comparator.comparing(Integer::intValue)).collect(Collectors.toList());
+        assertThat(ls).isEqualTo(Arrays.asList(1, 2, 3));
+    }
+
+    public void forEach() {
+    }
+
+    public void reduce() {
+    }
+
+    public void count() {
+    }
+
+    public void collect() {
+    }
+
+    public void match() {
+    }
 
     @Test
     public void average() {
@@ -227,8 +254,8 @@ public class StreamTest {
 
     @Test
     public void groupingBy() {
-        List<Pair> pairs = Arrays.asList(new Pair(1, "A"), new Pair(1, "B"), new Pair(2, "C"), new Pair(3, "D"));
-        Map<Integer, List<Pair>> groupedBy = pairs.stream().collect(Collectors.groupingBy(Pair::getId));
+        final List<Pair> pairs = Arrays.asList(new Pair(1, "A"), new Pair(1, "B"), new Pair(2, "C"), new Pair(3, "D"));
+        final Map<Integer, List<Pair>> groupedBy = pairs.stream().collect(Collectors.groupingBy(Pair::getId));
         assertThat(groupedBy.size()).isEqualTo(3);
         assertThat(groupedBy.get(1).size()).isEqualTo(2);
         assertThat(groupedBy.get(2).size()).isEqualTo(1);
@@ -236,18 +263,11 @@ public class StreamTest {
     }
 
     @Test
-    public void sorted() {
-        List<Integer> list = Arrays.asList(2, 3, 1);
-        List<Integer> sorted = list.stream().sorted(Comparator.comparing(Integer::intValue)).collect(Collectors.toList());
-        assertThat(sorted).isEqualTo(Arrays.asList(1, 2, 3));
-    }
-
-    @Test
     public void partition() {
         final int size = 2;
         final AtomicInteger counter = new AtomicInteger(0);
-        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
-        Collection<List<Integer>> actual = list.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / size)).values();
+        final List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
+        final Collection<List<Integer>> actual = list.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / size)).values();
         assertThat(actual.size()).isEqualTo(3);
         assertThat(new ArrayList<>(actual).get(0).size()).isEqualTo(2);
         assertThat(new ArrayList<>(actual).get(1).size()).isEqualTo(2);
@@ -260,13 +280,13 @@ public class StreamTest {
 
     @Test
     public void takeWhile() {
-        Integer[] array = Stream.of(0, 2, 4, 6, 7, 8, 10).takeWhile(n -> n % 2 == 0).toArray(Integer[]::new);
+        final Integer[] array = Stream.of(0, 2, 4, 6, 7, 8, 10).takeWhile(n -> n % 2 == 0).toArray(Integer[]::new);
         assertThat(array).isEqualTo(new Integer[]{0, 2, 4, 6});
     }
 
     @Test
     public void dropWhile() {
-        Integer[] array = Stream.of(0, 2, 4, 6, 7, 8, 10).dropWhile(n -> n % 2 == 0).toArray(Integer[]::new);
+        final Integer[] array = Stream.of(0, 2, 4, 6, 7, 8, 10).dropWhile(n -> n % 2 == 0).toArray(Integer[]::new);
         assertThat(array).isEqualTo(new Integer[]{7, 8, 10});
     }
 
@@ -274,8 +294,8 @@ public class StreamTest {
      * Returns the number of the month ranging from 0..11.
      */
     private int month(Point point) {
-        Instant instant = Instant.ofEpochMilli(point.timestamp);
-        LocalDateTime dateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+        final Instant instant = Instant.ofEpochMilli(point.timestamp);
+        final LocalDateTime dateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
         return dateTime.getMonth().ordinal();
     }
 
