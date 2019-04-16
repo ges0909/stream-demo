@@ -21,7 +21,7 @@ public class StreamTest {
 
     @Test
     public void emptyStream() {
-        Stream<String> s = Stream.of(); // Stream<T> not required because of Java 10 local variable type inference
+        Stream<String> s = Stream.of();
         Stream<String> s2 = Stream.empty();
         assertThat(s.count()).isEqualTo(0);
         assertThat(s2.count()).isEqualTo(0);
@@ -112,7 +112,7 @@ public class StreamTest {
 
     @Test
     public void streamFromFile() throws IOException {
-        try (Stream<String> s = Files.lines(Paths.get("C:\\sample.txt")))  {
+        try (Stream<String> s = Files.lines(Paths.get("C:\\sample.txt"))) {
             s.forEach(System.out::println);
         }
     }
@@ -120,6 +120,52 @@ public class StreamTest {
     /**
      * Stream conversion
      */
+
+    @Test
+    public void streamToList() {
+        Stream<Integer> s = Stream.of(1, 2, 3);
+        List<Integer> list = s.collect(Collectors.toList());
+        assertThat(list).isEqualTo(Arrays.asList(1, 2, 3));
+    }
+
+    @Test
+    public void streamToCollection() {
+        Stream<Integer> s = Stream.of(1, 2, 3);
+        Collection<Integer> coll = s.collect(Collectors.toCollection(ArrayList::new));
+        assertThat(coll).isEqualTo(Arrays.asList(1, 2, 3));
+    }
+
+    @Test
+    public void streamToListWithForEach() {
+        Stream<Integer> s = Stream.of(1, 2, 3);
+        List<Integer> list = new ArrayList<>();
+        s.forEach(list::add);
+        assertThat(list).isEqualTo(Arrays.asList(1, 2, 3));
+    }
+
+    @Test
+    public void streamToMap() {
+        Stream<String[]> s = Stream.of(new String[][]{{"1", "one"}, {"2", "two"}});
+        Map<String, String> map = s.collect(Collectors.toMap(e -> e[0], e -> e[1]));
+        assertThat(map).isEqualTo(new HashMap<>() {{
+            put("1", "one");
+            put("2", "two");
+        }});
+    }
+
+    @Test
+    public void streamToArray() {
+        Stream<Integer> s = Stream.of(1, 2, 3);
+        Integer[] array = s.toArray(Integer[]::new);
+        assertThat(array).isEqualTo(new Integer[]{1, 2, 3});
+    }
+
+    @Test
+    public void streamToArrayIntPrimitives() {
+        Stream<Integer> s = Stream.of(1, 2, 3);
+        int[] array = s.mapToInt(i -> i).toArray();
+        assertThat(array).isEqualTo(new Integer[]{1, 2, 3});
+    }
 
     @Test
     public void listToString() {
