@@ -21,11 +21,15 @@ public class StreamTest {
      */
 
     @Test
-    public void emptyStream() {
+    public void emptyStreamWithOf() {
         Stream<String> s = Stream.of();
-        Stream<String> s2 = Stream.empty();
         assertThat(s.count()).isEqualTo(0);
-        assertThat(s2.count()).isEqualTo(0);
+    }
+
+    @Test
+    public void emptyStream() {
+        Stream<String> s = Stream.empty();
+        assertThat(s.count()).isEqualTo(0);
     }
 
     @Test
@@ -162,29 +166,37 @@ public class StreamTest {
     }
 
     @Test
-    public void streamToArrayIntPrimitives() {
+    public void streamToArrayOfIntPrimitives() {
         Stream<Integer> s = Stream.of(1, 2, 3);
         int[] array = s.mapToInt(i -> i).toArray();
         assertThat(array).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
-    public void listToString() {
-        List<Integer> list = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
-        String result = list.stream().map(String::valueOf).reduce((a, b) -> a + ", " + b).orElseGet(String::new);
-        assertThat(result).isEqualTo("1, 2, 3, 5, 8, 13, 21");
+    public void reduceListOfElementsToString() {
+        List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
+        String s = l.stream().map(String::valueOf).reduce((a, b) -> a + ", " + b).orElseGet(String::new);
+        assertThat(s).isEqualTo("1, 2, 3, 5, 8, 13, 21");
     }
 
     @Test
-    public void listToArray() {
-        List<Integer> list = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
-        // variant 1
-        Integer[] result = list.stream().toArray(Integer[]::new);
-        assertThat(result).isEqualTo(new Integer[]{1, 2, 3, 5, 8, 13, 21});
-        // variant 2
-        int[] result2 = list.stream().mapToInt(l -> l).toArray();
-        assertThat(result2).isEqualTo(new Integer[]{1, 2, 3, 5, 8, 13, 21});
+    public void convertListToArray() {
+        List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
+        Integer[] a = l.stream().toArray(Integer[]::new);
+        assertThat(a).isEqualTo(new Integer[]{1, 2, 3, 5, 8, 13, 21});
     }
+
+    @Test
+    public void convertListToIntArray() {
+        List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
+        int[] a = l.stream().mapToInt(i -> i).toArray();
+        assertThat(a).isEqualTo(new Integer[]{1, 2, 3, 5, 8, 13, 21});
+    }
+
+    /**
+     * Stream operation
+     */
+
 
     @Test
     public void average() {
@@ -243,6 +255,22 @@ public class StreamTest {
     }
 
     /**
+     * Java 9: takeWhile, dropWhile
+     */
+
+    @Test
+    public void takeWhile() {
+        Integer[] array = Stream.of(0, 2, 4, 6, 7, 8, 10).takeWhile(n -> n % 2 == 0).toArray(Integer[]::new);
+        assertThat(array).isEqualTo(new Integer[]{0, 2, 4, 6});
+    }
+
+    @Test
+    public void dropWhile() {
+        Integer[] array = Stream.of(0, 2, 4, 6, 7, 8, 10).dropWhile(n -> n % 2 == 0).toArray(Integer[]::new);
+        assertThat(array).isEqualTo(new Integer[]{7, 8, 10});
+    }
+
+    /*
      * Returns the number of the month ranging from 0..11.
      */
     private int month(Point point) {
