@@ -21,7 +21,7 @@ public class StreamTest {
 
     @Test
     public void emptyStream() {
-        Stream s = Stream.of(); // Stream<T> not required because of Java 10 local variable type inference
+        Stream<String> s = Stream.of(); // Stream<T> not required because of Java 10 local variable type inference
         Stream s2 = Stream.empty();
         assertThat(s.count()).isEqualTo(0);
         assertThat(s2.count()).isEqualTo(0);
