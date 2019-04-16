@@ -21,14 +21,14 @@ public class StreamTest {
      */
 
     @Test
-    public void emptyStreamWithOf() {
-        final Stream<String> s = Stream.of();
+    public void emptyStream() {
+        final Stream<String> s = Stream.empty();
         assertThat(s.count()).isEqualTo(0);
     }
 
     @Test
-    public void emptyStream() {
-        final Stream<String> s = Stream.empty();
+    public void emptyStreamWithOf() {
+        final Stream<String> s = Stream.of();
         assertThat(s.count()).isEqualTo(0);
     }
 
@@ -136,8 +136,8 @@ public class StreamTest {
     @Test
     public void streamToCollection() {
         final Stream<Integer> s = Stream.of(1, 2, 3);
-        final Collection<Integer> coll = s.collect(Collectors.toCollection(ArrayList::new));
-        assertThat(coll).isEqualTo(Arrays.asList(1, 2, 3));
+        final Collection<Integer> collection = s.collect(Collectors.toCollection(ArrayList::new));
+        assertThat(collection).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
     @Test
