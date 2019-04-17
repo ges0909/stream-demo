@@ -14,44 +14,44 @@ import java.util.stream.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StreamTest {
+class StreamTest {
 
     /**
      * Stream creation
      */
 
     @Test
-    public void emptyStream() {
+    void emptyStream() {
         final Stream<String> s = Stream.empty();
         assertThat(s.count()).isEqualTo(0);
     }
 
     @Test
-    public void emptyStreamWithOf() {
+    void emptyStreamWithOf() {
         final Stream<String> s = Stream.of();
         assertThat(s.count()).isEqualTo(0);
     }
 
     @Test
-    public void streamFromIntegers() {
+    void streamFromIntegers() {
         final Stream<Integer> s = Stream.of(1, 2, 3);
         assertThat(s.toArray(Integer[]::new)).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
-    public void streamFromCharacters() {
+    void streamFromCharacters() {
         final Stream<Character> s = Stream.of('a', 'b', 'c');
         assertThat(s.toArray(Character[]::new)).isEqualTo(new Character[]{'a', 'b', 'c'});
     }
 
     @Test
-    public void streamFromStrings() {
+    void streamFromStrings() {
         final Stream<String> s = Stream.of("a", "b", "c");
         assertThat(s.toArray(String[]::new)).isEqualTo(new String[]{"a", "b", "c"});
     }
 
     @Test
-    public void streamFromIntPrimitives() {
+    void streamFromIntPrimitives() {
         final IntStream s = "test".chars();
         final IntStream s2 = "test".codePoints();
         assertThat(s.toArray()).isEqualTo(new int[]{116, 101, 115, 116});
@@ -59,64 +59,64 @@ public class StreamTest {
     }
 
     @Test
-    public void streamFromPattern() {
+    void streamFromPattern() {
         final Pattern p = Pattern.compile(",");
         final Stream<String> s = p.splitAsStream("a,b,c");
         assertThat(s.toArray(String[]::new)).isEqualTo(new String[]{"a", "b", "c"});
     }
 
     @Test
-    public void streamFromArray() {
+    void streamFromArray() {
         final Stream<Integer> s = Stream.of(1, 2, 3);
         assertThat(s.toArray(Integer[]::new)).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
-    public void streamFromArrayOfIntPrimitives() {
+    void streamFromArrayOfIntPrimitives() {
         IntStream s = Arrays.stream(new int[]{1, 2, 3});
         assertThat(s.toArray()).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
-    public void streamFromArrayOfLongPrimitives() {
+    void streamFromArrayOfLongPrimitives() {
         final LongStream s = Arrays.stream(new long[]{1, 2, 3});
         assertThat(s.toArray()).isEqualTo(new Long[]{1L, 2L, 3L});
     }
 
     @Test
-    public void streamFromArrayOfDoublePrimitives() {
+    void streamFromArrayOfDoublePrimitives() {
         final DoubleStream s = Arrays.stream(new double[]{1, 2, 3});
         assertThat(s.toArray()).isEqualTo(new Double[]{1.0, 2.0, 3.0});
     }
 
     @Test
-    public void streamFromCollections() {
+    void streamFromCollections() {
         final List<Integer> l = Arrays.asList(1, 2, 3);
         final Stream<Integer> s = l.stream(); // any type of collection possible
         assertThat(s.toArray()).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
-    public void parallelStreamFromCollections() {
+    void parallelStreamFromCollections() {
         final Set<Integer> s = new HashSet<>(Arrays.asList(1, 2, 3));
         final Stream<Integer> ps = s.parallelStream(); // any type of collection possible
         assertThat(ps.toArray()).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
-    public void streamFromGenerate() {
+    void streamFromGenerate() {
         var s = Stream.generate(new Random()::nextInt).limit(6); // generates an infinite unordered stream
         s.forEach(System.out::println);
     }
 
     @Test
-    public void streamFromIterate() {
+    void streamFromIterate() {
         var s = Stream.iterate(3, n -> n + 1).limit(6); // generates an infinite ordered stream
         assertThat(s.toArray()).isEqualTo(new int[]{3, 4, 5, 6, 7, 8});
     }
 
     @Test
-    public void streamFromFile() throws IOException, URISyntaxException {
+    void streamFromFile() throws IOException, URISyntaxException {
         try (final Stream<String> s = Files.lines(Paths.get(getClass().getClassLoader().getResource("samples.txt").toURI()))) {
             assertThat(s.toArray()).isEqualTo(new String[]{"eins", "zwei", "drei"});
         }
@@ -127,21 +127,21 @@ public class StreamTest {
      */
 
     @Test
-    public void streamToList() {
+    void streamToList() {
         final Stream<Integer> s = Stream.of(1, 2, 3);
         final List<Integer> list = s.collect(Collectors.toList());
         assertThat(list).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
     @Test
-    public void streamToCollection() {
+    void streamToCollection() {
         final Stream<Integer> s = Stream.of(1, 2, 3);
         final Collection<Integer> collection = s.collect(Collectors.toCollection(ArrayList::new));
         assertThat(collection).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
     @Test
-    public void streamToListWithForEach() {
+    void streamToListWithForEach() {
         final Stream<Integer> s = Stream.of(1, 2, 3);
         final List<Integer> list = new ArrayList<>();
         s.forEach(list::add);
@@ -149,7 +149,7 @@ public class StreamTest {
     }
 
     @Test
-    public void streamToMap() {
+    void streamToMap() {
         final Stream<String[]> s = Stream.of(new String[][]{{"1", "one"}, {"2", "two"}});
         final Map<String, String> map = s.collect(Collectors.toMap(e -> e[0], e -> e[1]));
         assertThat(map).isEqualTo(new HashMap<>() {{
@@ -159,35 +159,35 @@ public class StreamTest {
     }
 
     @Test
-    public void streamToArray() {
+    void streamToArray() {
         Stream<Integer> s = Stream.of(1, 2, 3);
         Integer[] array = s.toArray(Integer[]::new);
         assertThat(array).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
-    public void streamToArrayOfIntPrimitives() {
+    void streamToArrayOfIntPrimitives() {
         final Stream<Integer> s = Stream.of(1, 2, 3);
         final int[] array = s.mapToInt(i -> i).toArray();
         assertThat(array).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
-    public void reduceListOfElementsToString() {
+    void reduceListOfElementsToString() {
         final var l = List.of(1, 2, 3);
         final String s = l.stream().map(String::valueOf).reduce((a, b) -> a + ", " + b).orElseGet(String::new);
         assertThat(s).isEqualTo("1, 2, 3");
     }
 
     @Test
-    public void convertListToArray() {
+    void convertListToArray() {
         final var l = List.of(1, 2, 3);
         final Integer[] a = l.stream().toArray(Integer[]::new);
         assertThat(a).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
-    public void convertListToIntArray() {
+    void convertListToIntArray() {
         final var l = List.of(1, 2, 3);
         final int[] a = l.stream().mapToInt(i -> i).toArray();
         assertThat(a).isEqualTo(new Integer[]{1, 2, 3});
@@ -197,61 +197,61 @@ public class StreamTest {
      * Stream operation
      */
 
-    public void filter() {
+    void filter() {
     }
 
-    public void map() {
+    void map() {
     }
 
     @Test
-    public void sorted() {
+    void sorted() {
         final var list = List.of(2, 3, 1);
         final var sortedList = list.stream().sorted().collect(Collectors.toList());
         assertThat(sortedList).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
     @Test
-    public void sortedWithComparator() {
+    void sortedWithComparator() {
         final var list = List.of(2, 3, 1);
         final var sortedList = list.stream().sorted(Comparator.comparing(Integer::intValue)).collect(Collectors.toList());
         assertThat(sortedList).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
-    public void forEach() {
+    void forEach() {
     }
 
-    public void reduce() {
+    void reduce() {
     }
 
-    public void count() {
+    void count() {
     }
 
-    public void collect() {
+    void collect() {
     }
 
     @Test
-    public void allMatch() {
+    void allMatch() {
         Stream<String> s = Stream.of("eins", "zwei", "drei");
         boolean b = s.allMatch(v -> v.contains("ei"));
         assertThat(b).isTrue();
     }
 
     @Test
-    public void anyMatch() {
+    void anyMatch() {
         Stream<String> s = Stream.of("eins", "zwei", "drei");
         boolean b = s.anyMatch(v -> v.contains("dr"));
         assertThat(b).isTrue();
     }
 
     @Test
-    public void noneMatch() {
+    void noneMatch() {
         Stream<String> s = Stream.of("eins", "zwei", "drei");
         boolean b = s.noneMatch(v -> v.contains("ddr"));
         assertThat(b).isTrue();
     }
 
     @Test
-    public void groupingBy() {
+    void groupingBy() {
         final List<Pair> pairs = List.of(new Pair(1, "A"), new Pair(1, "B"), new Pair(2, "C"), new Pair(3, "D"));
         final Map<Integer, List<Pair>> groupedBy = pairs.stream().collect(Collectors.groupingBy(Pair::getId));
         assertThat(groupedBy.get(1)).isEqualTo(List.of(pairs.get(0), pairs.get(1)));
@@ -260,7 +260,7 @@ public class StreamTest {
     }
 
     @Test
-    public void partitioningByNumber() {
+    void partitioningByNumber() {
         final AtomicInteger number = new AtomicInteger(0);
         final List<Integer> list = List.of(1, 2, 3, 4, 5);
         final Collection<List<Integer>> partitionedCollection = list.stream().collect(Collectors.groupingBy(i -> number.getAndIncrement() / 2)).values();
@@ -271,7 +271,7 @@ public class StreamTest {
     }
 
     @Test
-    public void average() {
+    void average() {
         long jan16 = LocalDate.of(2016, Month.JANUARY, 31).atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
                 .toEpochMilli();
         long jan17 = LocalDate.of(2017, Month.JANUARY, 31).atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
@@ -302,13 +302,13 @@ public class StreamTest {
      */
 
     @Test
-    public void takeWhile() {
+    void takeWhile() {
         final Integer[] array = Stream.of(0, 2, 5, 6, 8).takeWhile(n -> n % 2 == 0).toArray(Integer[]::new);
         assertThat(array).isEqualTo(new Integer[]{0, 2});
     }
 
     @Test
-    public void dropWhile() {
+    void dropWhile() {
         final Integer[] array = Stream.of(0, 2, 5, 6, 8).dropWhile(n -> n % 2 == 0).toArray(Integer[]::new);
         assertThat(array).isEqualTo(new Integer[]{5, 6, 8});
     }
