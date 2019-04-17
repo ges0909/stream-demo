@@ -176,21 +176,21 @@ public class StreamTest {
     public void reduceListOfElementsToString() {
         final var l = List.of(1, 2, 3, 5, 8, 13, 21);
         final String s = l.stream().map(String::valueOf).reduce((a, b) -> a + ", " + b).orElseGet(String::new);
-        assertThat(s).isEqualTo("1, 2, 3, 5, 8, 13, 21");
+        assertThat(s).isEqualTo("1, 2, 3");
     }
 
     @Test
     public void convertListToArray() {
         final var l = List.of(1, 2, 3, 5, 8, 13, 21);
         final Integer[] a = l.stream().toArray(Integer[]::new);
-        assertThat(a).isEqualTo(new Integer[]{1, 2, 3, 5, 8, 13, 21});
+        assertThat(a).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
     public void convertListToIntArray() {
         final var l = List.of(1, 2, 3, 5, 8, 13, 21);
         final int[] a = l.stream().mapToInt(i -> i).toArray();
-        assertThat(a).isEqualTo(new Integer[]{1, 2, 3, 5, 8, 13, 21});
+        assertThat(a).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     /**
@@ -229,7 +229,47 @@ public class StreamTest {
     public void collect() {
     }
 
-    public void match() {
+    @Test
+    public void allMatch() {
+        Stream<String> s = Stream.of("eins", "zwei", "drei");
+        boolean b = s.allMatch(v -> v.contains("ei"));
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    public void anyMatch() {
+        Stream<String> s = Stream.of("eins", "zwei", "drei");
+        boolean b = s.anyMatch(v -> v.contains("dr"));
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    public void noneMatch() {
+        Stream<String> s = Stream.of("eins", "zwei", "drei");
+        boolean b = s.noneMatch(v -> v.contains("ddr"));
+        assertThat(b).isTrue();
+    }
+
+    @Test
+    public void groupingBy() {
+        final List<Pair> pairs = Arrays.asList(new Pair(1, "A"), new Pair(1, "B"), new Pair(2, "C"), new Pair(3, "D"));
+        final Map<Integer, List<Pair>> groupedBy = pairs.stream().collect(Collectors.groupingBy(Pair::getId));
+        assertThat(groupedBy.size()).isEqualTo(3);
+        assertThat(groupedBy.get(1).size()).isEqualTo(2);
+        assertThat(groupedBy.get(2).size()).isEqualTo(1);
+        assertThat(groupedBy.get(3).size()).isEqualTo(1);
+    }
+
+    @Test
+    public void partition() {
+        final int size = 2;
+        final AtomicInteger counter = new AtomicInteger(0);
+        final List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
+        final Collection<List<Integer>> actual = list.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / size)).values();
+        assertThat(actual.size()).isEqualTo(3);
+        assertThat(new ArrayList<>(actual).get(0).size()).isEqualTo(2);
+        assertThat(new ArrayList<>(actual).get(1).size()).isEqualTo(2);
+        assertThat(new ArrayList<>(actual).get(2).size()).isEqualTo(1);
     }
 
     @Test
@@ -287,14 +327,14 @@ public class StreamTest {
 
     @Test
     public void takeWhile() {
-        final Integer[] array = Stream.of(0, 2, 4, 6, 7, 8, 10).takeWhile(n -> n % 2 == 0).toArray(Integer[]::new);
-        assertThat(array).isEqualTo(new Integer[]{0, 2, 4, 6});
+        final Integer[] array = Stream.of(0, 2, 5, 6, 8).takeWhile(n -> n % 2 == 0).toArray(Integer[]::new);
+        assertThat(array).isEqualTo(new Integer[]{0, 2});
     }
 
     @Test
     public void dropWhile() {
-        final Integer[] array = Stream.of(0, 2, 4, 6, 7, 8, 10).dropWhile(n -> n % 2 == 0).toArray(Integer[]::new);
-        assertThat(array).isEqualTo(new Integer[]{7, 8, 10});
+        final Integer[] array = Stream.of(0, 2, 5, 6, 8).dropWhile(n -> n % 2 == 0).toArray(Integer[]::new);
+        assertThat(array).isEqualTo(new Integer[]{5, 6, 8});
     }
 
     /*
@@ -333,5 +373,4 @@ public class StreamTest {
             return this.value;
         }
     }
-
 }
