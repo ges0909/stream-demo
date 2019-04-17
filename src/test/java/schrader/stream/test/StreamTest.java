@@ -1,18 +1,20 @@
 package schrader.stream.test;
 
+import org.javatuples.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Java6Assertions.fail;
 
 class StreamTest {
 
@@ -117,8 +119,9 @@ class StreamTest {
 
     @Test
     void streamFromFile() throws IOException, URISyntaxException {
-        try (final Stream<String> s = Files.lines(Paths.get(getClass().getClassLoader().getResource("samples.txt").toURI()))) {
-            assertThat(s.toArray()).isEqualTo(new String[]{"eins", "zwei", "drei"});
+        URI uri = getClass().getClassLoader().getResource("samples.txt").toURI();
+        try (final Stream<String> lines = Files.lines(Paths.get(uri))) {
+            assertThat(lines.toArray()).isEqualTo(new String[]{"one", "two", "three"});
         }
     }
 
@@ -160,72 +163,85 @@ class StreamTest {
 
     @Test
     void streamToArray() {
-        Stream<Integer> s = Stream.of(1, 2, 3);
-        Integer[] array = s.toArray(Integer[]::new);
+        Integer[] array = Stream.of(1, 2, 3).toArray(Integer[]::new);
         assertThat(array).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
     void streamToArrayOfIntPrimitives() {
-        final Stream<Integer> s = Stream.of(1, 2, 3);
-        final int[] array = s.mapToInt(i -> i).toArray();
+        final int[] array = Stream.of(1, 2, 3).mapToInt(i -> i).toArray();
         assertThat(array).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     @Test
-    void reduceListOfElementsToString() {
-        final var l = List.of(1, 2, 3);
-        final String s = l.stream().map(String::valueOf).reduce((a, b) -> a + ", " + b).orElseGet(String::new);
+    void reduceStreamToString() {
+        final String s = Stream.of(1, 2, 3).map(String::valueOf).reduce((a, b) -> a + ", " + b).orElseGet(String::new);
         assertThat(s).isEqualTo("1, 2, 3");
-    }
-
-    @Test
-    void convertListToArray() {
-        final var l = List.of(1, 2, 3);
-        final Integer[] a = l.stream().toArray(Integer[]::new);
-        assertThat(a).isEqualTo(new Integer[]{1, 2, 3});
-    }
-
-    @Test
-    void convertListToIntArray() {
-        final var l = List.of(1, 2, 3);
-        final int[] a = l.stream().mapToInt(i -> i).toArray();
-        assertThat(a).isEqualTo(new Integer[]{1, 2, 3});
     }
 
     /**
      * Stream operation
      */
 
-    void filter() {
+    @Test
+    void forEach() {
     }
 
+    @Test
+    void filter() {
+        int[] arr = Stream.of(1, 2, 3).filter(i -> i % 2 == 0).mapToInt(Integer::intValue).toArray();
+        assertThat(arr).isEqualTo(new int[]{2});
+    }
+
+    @Test
     void map() {
+        int[] arr = Stream.of("one", "two", "three").map(String::length).mapToInt(Integer::intValue).toArray();
+        assertThat(arr).isEqualTo(new int[]{3, 3, 5});
     }
 
     @Test
     void sorted() {
-        final var list = List.of(2, 3, 1);
-        final var sortedList = list.stream().sorted().collect(Collectors.toList());
+        final var sortedList = Stream.of(2, 3, 1).sorted().collect(Collectors.toList());
         assertThat(sortedList).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
     @Test
     void sortedWithComparator() {
-        final var list = List.of(2, 3, 1);
-        final var sortedList = list.stream().sorted(Comparator.comparing(Integer::intValue)).collect(Collectors.toList());
+        final var sortedList = Stream.of(2, 3, 1).sorted(Comparator.comparing(Integer::intValue)).collect(Collectors.toList());
         assertThat(sortedList).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
-    void forEach() {
-    }
-
+    @Test
     void reduce() {
+        Integer sum = Stream.of(1, 2, 3).reduce(1, (a, b) -> a + b);
+        assertThat(sum).isEqualTo(7);
     }
 
+    @Test
+    void reduceWithSum() {
+        Integer sum = Stream.of(1, 2, 3).reduce(1, Integer::sum);
+        assertThat(sum).isEqualTo(7);
+    }
+
+    @Test
+    void sumOnIntStream() {
+        Integer sum = Stream.of(1, 2, 3).mapToInt(Integer::intValue).sum();
+        assertThat(sum).isEqualTo(6);
+    }
+
+    @Test
     void count() {
+        var count = Stream.of(1, 2, 3).count();
+        assertThat(count).isEqualTo(3);
     }
 
+    @Test
+    void average() {
+        OptionalDouble avg = Stream.of(1, 2, 3).mapToInt(Integer::intValue).average();
+        avg.ifPresentOrElse(v -> assertThat(v).isEqualTo(2.0), () -> fail("empty optional double"));
+    }
+
+    @Test
     void collect() {
     }
 
@@ -252,8 +268,12 @@ class StreamTest {
 
     @Test
     void groupingBy() {
-        final List<Pair> pairs = List.of(new Pair(1, "A"), new Pair(1, "B"), new Pair(2, "C"), new Pair(3, "D"));
-        final Map<Integer, List<Pair>> groupedBy = pairs.stream().collect(Collectors.groupingBy(Pair::getId));
+        final List<Pair<Integer, String>> pairs = List.of(
+                new Pair<>(1, "A"),
+                new Pair<>(1, "B"),
+                new Pair<>(2, "C"),
+                new Pair<>(3, "D"));
+        final Map<Integer, List<Pair<Integer, String>>> groupedBy = pairs.stream().collect(Collectors.groupingBy(Pair::getValue0));
         assertThat(groupedBy.get(1)).isEqualTo(List.of(pairs.get(0), pairs.get(1)));
         assertThat(groupedBy.get(2)).isEqualTo(List.of(pairs.get(2)));
         assertThat(groupedBy.get(3)).isEqualTo(List.of(pairs.get(3)));
@@ -262,39 +282,13 @@ class StreamTest {
     @Test
     void partitioningByNumber() {
         final AtomicInteger number = new AtomicInteger(0);
-        final List<Integer> list = List.of(1, 2, 3, 4, 5);
-        final Collection<List<Integer>> partitionedCollection = list.stream().collect(Collectors.groupingBy(i -> number.getAndIncrement() / 2)).values();
-        final List<List<Integer>> partitionedList = new ArrayList(partitionedCollection);
+        final Collection<List<Integer>> partitionedCollection = Stream.of(1, 2, 3, 4, 5)
+                .collect(Collectors.groupingBy(i -> number.getAndIncrement() / 2))
+                .values();
+        final List<List<Integer>> partitionedList = new ArrayList<>(partitionedCollection);
         assertThat(partitionedList.get(0)).isEqualTo(List.of(1, 2));
         assertThat(partitionedList.get(1)).isEqualTo(List.of(3, 4));
         assertThat(partitionedList.get(2)).isEqualTo(List.of(5));
-    }
-
-    @Test
-    void average() {
-        long jan16 = LocalDate.of(2016, Month.JANUARY, 31).atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
-                .toEpochMilli();
-        long jan17 = LocalDate.of(2017, Month.JANUARY, 31).atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
-                .toEpochMilli();
-        long jan18 = LocalDate.of(2018, Month.JANUARY, 31).atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
-                .toEpochMilli();
-        long feb16 = LocalDate.of(2016, Month.FEBRUARY, 29).atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
-                .toEpochMilli();
-        long feb17 = LocalDate.of(2017, Month.FEBRUARY, 28).atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
-                .toEpochMilli();
-        long feb18 = LocalDate.of(2018, Month.FEBRUARY, 28).atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
-                .toEpochMilli();
-
-        Point[] _points = {new Point(jan16, 1.0), new Point(feb16, 2.0), new Point(jan17, 3.0), new Point(feb17, 4.0),
-                new Point(jan18, 5.0), new Point(feb18, 6.0)};
-        List<Point> points = Arrays.asList(_points);
-
-        Map<Integer, Double> avgMap = new HashMap<>();
-        Map<Integer, List<Point>> sortedByMonth = points.stream().collect(Collectors.groupingBy(this::month));
-        for (Map.Entry<Integer, List<Point>> entry : sortedByMonth.entrySet()) {
-            double avg = entry.getValue().stream().mapToDouble(Point::getValue).average().getAsDouble();
-            avgMap.put(entry.getKey(), avg);
-        }
     }
 
     /**
@@ -311,42 +305,5 @@ class StreamTest {
     void dropWhile() {
         final Integer[] array = Stream.of(0, 2, 5, 6, 8).dropWhile(n -> n % 2 == 0).toArray(Integer[]::new);
         assertThat(array).isEqualTo(new Integer[]{5, 6, 8});
-    }
-
-    /*
-     * Returns the number of the month ranging from 0..11.
-     */
-    private int month(Point point) {
-        final Instant instant = Instant.ofEpochMilli(point.timestamp);
-        final LocalDateTime dateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
-        return dateTime.getMonth().ordinal();
-    }
-
-    class Pair {
-        int id;
-        String name;
-
-        Pair(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        int getId() {
-            return this.id;
-        }
-    }
-
-    class Point {
-        long timestamp;
-        double value;
-
-        Point(long timestamp, double value) {
-            this.timestamp = timestamp;
-            this.value = value;
-        }
-
-        double getValue() {
-            return this.value;
-        }
     }
 }

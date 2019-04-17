@@ -13,6 +13,7 @@ dependencies {
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.+'
     testCompile group: 'org.openjdk.jmh', name: 'jmh-core', version: '1.+'
     testCompile group: 'org.openjdk.jmh', name: 'jmh-generator-annprocess', version: '1.+'
+    testCompile group: 'org.javatuples', name: 'javatuples', version: '1.+'
 }
 
 test {
