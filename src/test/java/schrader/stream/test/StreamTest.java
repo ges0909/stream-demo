@@ -252,12 +252,11 @@ public class StreamTest {
 
     @Test
     public void groupingBy() {
-        final List<Pair> pairs = Arrays.asList(new Pair(1, "A"), new Pair(1, "B"), new Pair(2, "C"), new Pair(3, "D"));
+        final List<Pair> pairs = List.of(new Pair(1, "A"), new Pair(1, "B"), new Pair(2, "C"), new Pair(3, "D"));
         final Map<Integer, List<Pair>> groupedBy = pairs.stream().collect(Collectors.groupingBy(Pair::getId));
-        assertThat(groupedBy.size()).isEqualTo(3);
-        assertThat(groupedBy.get(1).size()).isEqualTo(2);
-        assertThat(groupedBy.get(2).size()).isEqualTo(1);
-        assertThat(groupedBy.get(3).size()).isEqualTo(1);
+        assertThat(groupedBy.get(1)).isEqualTo(List.of(pairs.get(0), pairs.get(1)));
+        assertThat(groupedBy.get(2)).isEqualTo(List.of(pairs.get(2)));
+        assertThat(groupedBy.get(3)).isEqualTo(List.of(pairs.get(3)));
     }
 
     @Test
