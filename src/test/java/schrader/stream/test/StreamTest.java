@@ -174,21 +174,21 @@ public class StreamTest {
 
     @Test
     public void reduceListOfElementsToString() {
-        final List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
+        final var l = List.of(1, 2, 3, 5, 8, 13, 21);
         final String s = l.stream().map(String::valueOf).reduce((a, b) -> a + ", " + b).orElseGet(String::new);
         assertThat(s).isEqualTo("1, 2, 3, 5, 8, 13, 21");
     }
 
     @Test
     public void convertListToArray() {
-        final List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
+        final var l = List.of(1, 2, 3, 5, 8, 13, 21);
         final Integer[] a = l.stream().toArray(Integer[]::new);
         assertThat(a).isEqualTo(new Integer[]{1, 2, 3, 5, 8, 13, 21});
     }
 
     @Test
     public void convertListToIntArray() {
-        final List<Integer> l = Arrays.asList(1, 2, 3, 5, 8, 13, 21);
+        final var l = List.of(1, 2, 3, 5, 8, 13, 21);
         final int[] a = l.stream().mapToInt(i -> i).toArray();
         assertThat(a).isEqualTo(new Integer[]{1, 2, 3, 5, 8, 13, 21});
     }
@@ -205,15 +205,15 @@ public class StreamTest {
 
     @Test
     public void sorted() {
-        final List<Integer> list = Arrays.asList(2, 3, 1);
-        final List<Integer> sortedList = list.stream().sorted().collect(Collectors.toList());
+        final var list = List.of(2, 3, 1);
+        final var sortedList = list.stream().sorted().collect(Collectors.toList());
         assertThat(sortedList).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
     @Test
     public void sortedWithComparator() {
-        final List<Integer> list = Arrays.asList(2, 3, 1);
-        final List<Integer> sortedList = list.stream().sorted(Comparator.comparing(Integer::intValue)).collect(Collectors.toList());
+        final var list = List.of(2, 3, 1);
+        final var sortedList = list.stream().sorted(Comparator.comparing(Integer::intValue)).collect(Collectors.toList());
         assertThat(sortedList).isEqualTo(Arrays.asList(1, 2, 3));
     }
 
@@ -261,7 +261,7 @@ public class StreamTest {
 
     @Test
     public void groupingBy() {
-        final List<Pair> pairs = Arrays.asList(new Pair(1, "A"), new Pair(1, "B"), new Pair(2, "C"), new Pair(3, "D"));
+        final List<Pair> pairs = List.of(new Pair(1, "A"), new Pair(1, "B"), new Pair(2, "C"), new Pair(3, "D"));
         final Map<Integer, List<Pair>> groupedBy = pairs.stream().collect(Collectors.groupingBy(Pair::getId));
         assertThat(groupedBy.size()).isEqualTo(3);
         assertThat(groupedBy.get(1).size()).isEqualTo(2);
@@ -273,7 +273,7 @@ public class StreamTest {
     public void partition() {
         final int size = 2;
         final AtomicInteger counter = new AtomicInteger(0);
-        final List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
+        final List<Integer> list = List.of(1, 2, 3, 4, 5);
         final Collection<List<Integer>> actual = list.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / size)).values();
         assertThat(actual.size()).isEqualTo(3);
         assertThat(new ArrayList<>(actual).get(0).size()).isEqualTo(2);
