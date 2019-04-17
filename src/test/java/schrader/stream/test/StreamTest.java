@@ -1,6 +1,6 @@
 package schrader.stream.test;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -260,6 +260,16 @@ public class StreamTest {
         assertThat(groupedBy.get(3).size()).isEqualTo(1);
     }
 
+    @Test
+    public void partitioningByNumber() {
+        final AtomicInteger number = new AtomicInteger(0);
+        final List<Integer> list = List.of(1, 2, 3, 4, 5);
+        final Collection<List<Integer>> partitionedCollection = list.stream().collect(Collectors.groupingBy(i -> number.getAndIncrement() / 2)).values();
+        final List<List<Integer>> partitionedList = new ArrayList(partitionedCollection);
+        assertThat(partitionedList.get(0)).isEqualTo(List.of(1, 2));
+        assertThat(partitionedList.get(1)).isEqualTo(List.of(3, 4));
+        assertThat(partitionedList.get(2)).isEqualTo(List.of(5));
+    }
 
     @Test
     public void average() {
@@ -286,18 +296,6 @@ public class StreamTest {
             double avg = entry.getValue().stream().mapToDouble(Point::getValue).average().getAsDouble();
             avgMap.put(entry.getKey(), avg);
         }
-    }
-
-    @Test
-    public void partition() {
-        final int size = 2;
-        final AtomicInteger counter = new AtomicInteger(0);
-        final List<Integer> list = List.of(1, 2, 3, 4, 5);
-        final Collection<List<Integer>> actual = list.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / size)).values();
-        assertThat(actual.size()).isEqualTo(3);
-        assertThat(new ArrayList<>(actual).get(0).size()).isEqualTo(2);
-        assertThat(new ArrayList<>(actual).get(1).size()).isEqualTo(2);
-        assertThat(new ArrayList<>(actual).get(2).size()).isEqualTo(1);
     }
 
     /**
