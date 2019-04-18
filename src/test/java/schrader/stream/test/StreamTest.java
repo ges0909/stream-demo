@@ -1,6 +1,7 @@
 package schrader.stream.test;
 
 import org.javatuples.Pair;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,8 @@ import static org.assertj.core.api.Java6Assertions.fail;
 class StreamTest {
 
     @Nested
-    class StreamCreationTest {
+    @DisplayName("stream creation")
+    class StreamCreation {
 
         @Test
         void emptyStream() {
@@ -107,28 +109,45 @@ class StreamTest {
         }
 
         @Test
-        void streamFromGenerate() {
-            var s = Stream.generate(new Random()::nextInt).limit(6); // generates an infinite unordered stream
-            s.forEach(System.out::println);
-        }
-
-        @Test
-        void streamFromIterate() {
-            var s = Stream.iterate(3, n -> n + 1).limit(6); // generates an infinite ordered stream
-            assertThat(s.toArray()).isEqualTo(new int[]{3, 4, 5, 6, 7, 8});
-        }
-
-        @Test
         void streamFromFile() throws IOException, URISyntaxException {
             URI uri = getClass().getClassLoader().getResource("samples.txt").toURI();
             try (final Stream<String> lines = Files.lines(Paths.get(uri))) {
                 assertThat(lines.toArray()).isEqualTo(new String[]{"one", "two", "three"});
             }
         }
+
+        @Test
+        void streamBuilder() {
+            Stream<String> s = Stream.<String>builder()
+                    .add("one")
+                    .add("two")
+                    .add("three")
+                    .build();
+            assertThat(s.toArray()).isEqualTo(new String[]{"one", "two", "three"});
+        }
+
+        @Test
+        void streamGenerate() {
+            var s = Stream.generate(new Random()::nextInt).limit(6); // generates an infinite unordered stream
+            s.forEach(System.out::println);
+        }
+
+        @Test
+        void streamIterate() {
+            var s = Stream.iterate(3, n -> n + 1).limit(6); // generates an infinite ordered stream
+            assertThat(s.toArray()).isEqualTo(new int[]{3, 4, 5, 6, 7, 8});
+        }
     }
 
     @Nested
-    class IntStreamTest {
+    @DisplayName("stream odf primitives")
+    class StreamOfPrimitives {
+
+        @Test
+        void intStreamOf() {
+            var s = IntStream.of(1, 2, 3);
+            assertThat(s.toArray()).isEqualTo(new int[]{1, 2, 3});
+        }
 
         @Test
         void range() {
@@ -144,7 +163,8 @@ class StreamTest {
     }
 
     @Nested
-    class StreamConversionTest {
+    @DisplayName("stream conversions")
+    class StreamConversion {
         @Test
         void streamToList() {
             final Stream<Integer> s = Stream.of(1, 2, 3);
@@ -197,7 +217,8 @@ class StreamTest {
     }
 
     @Nested
-    class StreamOperationTest {
+    @DisplayName("stream operations")
+    class StreamOperation {
 
         @Test
         void findFirst() {
@@ -326,7 +347,8 @@ class StreamTest {
     }
 
     @Nested
-    class Java9StreamTest {
+    @DisplayName("Java 9 stream add-ons")
+    class Java9Stream {
 
         @Test
         void takeWhile() {
